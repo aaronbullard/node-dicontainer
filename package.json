@@ -1,0 +1,31 @@
+{
+  "name": "node-dicontainer",
+  "version": "0.0.1",
+  "description": "Dependency Injection container for node.js",
+  "main": "src/Container.js",
+  "scripts": {
+    "test": "jasmine | istanbul cover node_modules/jasmine/bin/jasmine.js -x **.spec.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aaronbullard/node-dicontainer.git"
+  },
+  "keywords": [
+    "dependency",
+    "injection",
+    "node",
+    "di",
+    "ioc",
+    "inversion of control"
+  ],
+  "author": "Aaron Bullard <jabullard@aol.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/aaronbullard/node-dicontainer/issues"
+  },
+  "homepage": "https://github.com/aaronbullard/node-dicontainer#readme",
+  "devDependencies": {
+    "istanbul": "^0.4.2",
+    "jasmine": "^2.4.1"
+  }
+}
