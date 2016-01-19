@@ -97,4 +97,55 @@ describe('ContainerSpec', function(){
     }).toThrowError()
   });
 
+  describe("uses automatic resolution through reflection", function(){
+    function Voice(){
+      this.sayHello = function(){
+        return "Hello";
+      }
+    }
+
+    function Legs(){
+      this.run = function(){
+        return "I'm running";
+      }
+    }
+
+    function Person (Voice, Legs){
+      this.speak = Voice.sayHello;
+      this.run = Legs.run;
+    }
+
+    beforeEach(function(){
+      Container.bind('Voice', function(){
+        return new Voice();
+      });
+
+      Container.bind('Legs', function(){
+        return new Legs();
+      });
+    });
+
+    it("builds an constructor object", function(){
+      var person = Container.build(Person);
+
+      expect(person).toBeDefined();
+      expect(person.constructor.name).toEqual('Person');
+      expect(person.speak()).toEqual('Hello');
+      expect(person.run()).toEqual("I'm running");
+    });
+
+    it("builds a closure with injected dependencies", function(){
+      var obj = Container.build(function(Legs, Voice){
+        return {
+          legs: Legs,
+          voice: Voice
+        }
+      });
+
+      expect(obj.legs.run()).toEqual("I'm running");
+      expect(obj.voice.sayHello()).toEqual('Hello');
+    });
+
+  });
+
 });

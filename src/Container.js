@@ -1,3 +1,5 @@
+//http://stackoverflow.com/questions/1007981/how-to-get-function-parameter-names-values-dynamically-from-javascript
+
 var Container = module.exports = {
 
   _factories: {},
@@ -97,6 +99,37 @@ var Container = module.exports = {
 
   make: function(name){
     return this.resolve(name);
+  },
+
+
+  build: function(func){
+    if(typeof func !== 'function')
+      throw new TypeError("Container::build() argument is not a Function.");
+
+    var args = this._getFunctionArgs(func)
+      .map(function(arg){
+        try{
+          return this.resolve(arg);
+        }catch(e){
+          throw new Error("BindingResolution: Cannot instantiate " + func.constructor.name);
+        }
+      }.bind(this));
+
+    function F(){
+      return func.apply(this, args);
+    }
+
+    F.prototype = func.prototype;
+
+    return new F();
+  },
+
+  _getFunctionArgs: function(func) {
+    return (func+'').replace(/\s+/g,'')
+      .replace(/[/][*][^/*]*[*][/]/g,'') // strip simple comments
+      .split('){',1)[0].replace(/^[^(]*[(]/,'') // extract the parameters
+      .replace(/=[^,]+/g,'') // strip any ES6 defaults
+      .split(',').filter(Boolean); // split & filter [""]
   }
 
 }
