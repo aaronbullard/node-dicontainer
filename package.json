@@ -27,5 +27,8 @@
   "devDependencies": {
     "istanbul": "^0.4.2",
     "jasmine": "^2.4.1"
+  },
+  "dependencies": {
+    "promise": "^7.1.1"
   }
 }

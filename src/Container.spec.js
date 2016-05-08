@@ -1,4 +1,5 @@
 var Container = require('./Container.js');
+var Promise = require('promise');
 
 describe('ContainerSpec', function(){
 
@@ -146,6 +147,69 @@ describe('ContainerSpec', function(){
       expect(obj.voice.sayHello()).toEqual('Hello');
     });
 
+  });
+
+  describe("it uses promises", function(){
+
+      function wait(){
+          for (var i = 0; i < 1000000000; i++) {}
+          return true;
+      }
+/*/
+     it("resolves dependencies recursively", function(){
+         function Parent(child1, child2, child3){
+             return [child1, child2, child3];
+         }
+
+         function Child(name){
+             this.name = name;
+         }
+
+         Container.bind('Child1', function(){
+             wait();
+             return new Child('one');
+         });
+         Container.bind('Child2', function(){
+             wait();
+            return new Child('two');
+         });
+         Container.bind('Child3', function(){
+             wait();
+            return new Child('three');
+         });
+
+         Container.bind('Parent', function(container){
+var time1 = (new Date).getTime();
+             var par = new Parent(
+                container.Child1,
+                container.Child2,
+                container.Child3
+             );
+var time2 = (new Date).getTime();
+var diff = time2 - time1;
+console.log(diff);
+// done();
+             return par;
+         });
+
+         expect(Container.Parent).toEqual([
+             Container.Child1,
+             Container.Child2,
+             Container.Child3
+         ]);
+         expect(Container.Child1.name).toEqual('one');
+     });
+/*/
+     it("test async with promises", function(){
+         var p = new Promise(wait);
+         var time1 = (new Date).getTime();
+         p.then(function(){
+             var time2 = (new Date).getTime();
+             console.log('done: ', time2 - time1);
+         }).catch(function(err){
+             console.log(err);
+         });
+     });
   });
 
 });

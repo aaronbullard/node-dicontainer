@@ -37,6 +37,8 @@ var Container = module.exports = {
     delete this._factories[name];
     delete this._sharedInstances[name];
     delete this._instances[name];
+
+    return this;
   },
 
   bindShared: function(name, fn){

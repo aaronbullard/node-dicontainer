@@ -1,0 +1,23 @@
+
+sudo: false
+language: node_js
+node_js:
+- '5.4.1'
+branches:
+  only:
+  - master
+  - develop
+cache:
+  directories:
+  - node_modules
+services:
+before_script:
+#- cp .env.example .env
+- npm install
+- npm install -g codeclimate-test-reporter
+- sleep 10
+script:
+- npm test
+after_success:
+- codeclimate-test-reporter < ./coverage/lcov.info
+notifications:
