@@ -1,4 +1,6 @@
 //http://stackoverflow.com/questions/1007981/how-to-get-function-parameter-names-values-dynamically-from-javascript
+var Promise = require('promise');
+
 
 var Container = module.exports = {
 
@@ -15,7 +17,8 @@ var Container = module.exports = {
     });
   },
 
-  register: function(name, fn){
+
+  bind: function(name, fn){
     if(typeof fn !== 'function'){
       throw new TypeError("'fn' must be a function.");
     }
@@ -29,9 +32,6 @@ var Container = module.exports = {
     return this;
   },
 
-  bind: function(name, fn){
-    return this.register(name, fn);
-  },
 
   unbind: function(name){
     delete this._factories[name];
@@ -40,6 +40,7 @@ var Container = module.exports = {
 
     return this;
   },
+
 
   bindShared: function(name, fn){
     if(typeof fn !== 'function'){
@@ -54,10 +55,7 @@ var Container = module.exports = {
 
     return this;
   },
-
-  singleton: function(name, fn){
-    return this.bindShared(name, fn);
-  },
+  
 
   instance: function(name, instance){
 
@@ -69,38 +67,30 @@ var Container = module.exports = {
 
     return this;
   },
-
-  create: function(name){
-    return this._factories[name](this);
-  },
-
-  getInstance: function(name){
-    return this._instances[name];
-  },
+  
 
   resolve: function(name){
     // Get resolved singleton
     if(this._instances.hasOwnProperty(name)){
-      return this.getInstance(name);
+      return this._instances[name];
     }
 
     // Create singleton instance
     if(this._sharedInstances.hasOwnProperty(name)){
+      // resolve
       var instance = this._sharedInstances[name](this);
+      // set new singleton instance
       this.instance(name, instance);
+      
       return instance;
     }
 
     // Get factory and create
     if(this._factories.hasOwnProperty(name)){
-      return this.create(name);
+      return this._factories[name](this);
     }
 
     throw new Error("No service registered: '" + name + "'");
-  },
-
-  make: function(name){
-    return this.resolve(name);
   },
 
 
@@ -132,6 +122,31 @@ var Container = module.exports = {
       .split('){',1)[0].replace(/^[^(]*[(]/,'') // extract the parameters
       .replace(/=[^,]+/g,'') // strip any ES6 defaults
       .split(',').filter(Boolean); // split & filter [""]
+  },
+
+
+
+  /*/
+   * Extra Interfaces
+  /*/
+  register: function(name, fn){
+    return this.bind(name, fn);
+  },
+  
+  singleton: function(name, fn){
+    return this.bindShared(name, fn);
+  },
+
+  make: function(name){
+    return this.resolve(name);
+  },
+  
+  create: function(name){ // not used
+    return this._factories[name](this);
+  },
+
+  getInstance: function(name){ // not used
+    return this._instances[name];
   }
 
 }
